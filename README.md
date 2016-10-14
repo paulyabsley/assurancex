@@ -21,7 +21,7 @@ A cycle insurance company, Assurance X, need a new section to their website to a
   - Type of Cover Required (three levels of cover, with their price multiplier, see the calculation below)
     - bronze = 1
     - silver = 2
-    - gold = 3)
+    - gold = 3
 
 You should then show the resulting yearly premium and allow them to pay by PayPal.
 
