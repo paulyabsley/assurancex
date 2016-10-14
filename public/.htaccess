@@ -1,0 +1,4 @@
+Options -Multiviews
+RewriteEngine on
+
+RewriteRule ^quote/([a-z-]+)/?$ quote.php?step=$1 [QSD,L]
