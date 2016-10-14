@@ -119,14 +119,4 @@ class Utilities {
 		exit;
 	}
 
-	/**
-	 * Format field name
-	 * @param string The field name e.g. field-name
-	 * @return string The formatted field name e.g. Field Name
-	 */
-	public static function format_field_name($field) {
-		$field_formatted = ucwords(str_replace('_', ' ', $field));
-		return $field_formatted;
-	}
-
 }

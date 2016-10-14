@@ -35,7 +35,6 @@ class Html {
 	public function b() {
 		$o = '</head>';
 		$o .= '<body>';
-		$o .= '<div class="wrapper">';
 		return $o;
 	}
 
@@ -44,8 +43,7 @@ class Html {
 	 * @return string
 	 */
 	public function f() {
-		$o = '</div>';
-		$o .= '</body>';
+		$o = '</body>';
 		$o .= '</html>';
 		return $o;
 	}
