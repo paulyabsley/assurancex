@@ -2,7 +2,7 @@
 
 class Utilities {
 
-	public static $user_details = [
+	public static $personal_details = [
 		'title' => [
 			'name' => 'title',
 			'type' => 'text',
@@ -55,7 +55,7 @@ class Utilities {
 		'submit_cancel' => [
 			'name' => 'next',
 			'type' => 'submit',
-			'value' => 'page',
+			'value' => 'submit_personal_details',
 		]
 	];
 
@@ -84,7 +84,7 @@ class Utilities {
 		'submit_cancel' => [
 			'name' => 'next',
 			'type' => 'submit',
-			'value' => 'page',
+			'value' => 'submit_bike_details',
 		]
 	];
 
@@ -106,7 +106,7 @@ class Utilities {
 		'submit_cancel' => [
 			'name' => 'get_quote',
 			'type' => 'submit',
-			'value' => 'page',
+			'value' => 'submit_cover_type',
 		]
 	];
 

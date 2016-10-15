@@ -12,3 +12,9 @@ spl_autoload_register('autoloader');
 function autoloader($className) {
 	require dirname(dirname(__FILE__)) . '/private/classes/' . $className . '.class.php';
 }
+
+// Start Session
+$session = new Session();
+// $message = $session->message();
+
+$errors = [];

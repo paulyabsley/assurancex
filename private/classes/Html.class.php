@@ -2,9 +2,9 @@
 
 class Html {
 
-	public $h;
-	public $b;
-	public $f;
+	public $h; // head
+	public $b; // body
+	public $f; // foot
 
 	function __construct($t) {
 		$this->h = $this->h($t);
@@ -46,6 +46,33 @@ class Html {
 		$o = '</body>';
 		$o .= '</html>';
 		return $o;
+	}
+
+	/**
+	 * Output errors
+	 * @param array $errors Associative array of errors
+	 * @return string Formatted error panel or empty string
+	 */
+	public static function display_errors($errors = array(), $display_type) {
+		$output = '';
+		if (!empty($errors)) {
+			if ($display_type == "alert") {
+				$output .= '<div data-alert class="alert-box alert radius">';
+				foreach ($errors as $key => $error) {
+					$output .=  h($error) . '</br>';
+				}
+			} else {
+				$output .= '<div class="panel">';
+				$output .= '<h5>Correct the following errors:</h5>';
+				$output .= '<ul>';
+				foreach ($errors as $key => $error) {
+					$output .= '<li>' . h($error) . '</li>';
+				}
+				$output .= '</ul>';
+			}
+			$output .= '</div>';
+		}
+		return $output;
 	}
 
 }

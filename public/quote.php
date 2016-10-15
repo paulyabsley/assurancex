@@ -1,13 +1,11 @@
 <?php
 require_once('../private/init.php');
-
-$quote = new Quote();
-
 $html = new Html('Assurance X Online Quote');
-
+$quote = new Quote();
 echo $html->h;
 echo $html->b;
-
-echo $quote->form;
-
+echo $quote->errors;
+echo $quote->display_form;
+// var_dump($_SESSION);
+// var_dump($errors);
 echo $html->f;

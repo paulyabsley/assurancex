@@ -1,5 +1,5 @@
 <?php
 define("DB_HOST", "localhost");
 define("DB_NAME", "assurancex");
-define("DB_USER", "user");
-define("DB_PASS", "pass");
+define("DB_USER", "assurancex_user");
+define("DB_PASS", "assurancex_pass");
