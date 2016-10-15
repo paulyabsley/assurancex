@@ -1,7 +1,14 @@
 <?php
 
-
 class Premium {
+
+	public $quote;
+
+	function __construct() {
+		if (isset($_SESSION["quote_id"])) {
+			$this->quote = Database::find_row_by_id('quotes', $_SESSION["quote_id"]);
+		}
+	}
 
 	// Use crimes at location api
 

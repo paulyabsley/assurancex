@@ -13,6 +13,7 @@ class Quote {
 	public $quote_step;
 	public $form;
 	public $display_form;
+	public $display_premium;
 	public $errors;
 	public $restart;
 
@@ -38,9 +39,10 @@ class Quote {
 
 		// Set Quote Form
 		$this->display_quote_step_form();
-
 		// Set Restart
 		$this->display_quote_restart_link();
+		// Set Quote Premium
+		$this->display_quote_premium();
 	}
 
 	/**
@@ -62,7 +64,7 @@ class Quote {
 		`market_value` VARCHAR(100) NULL,
 		`policy_start_date` VARCHAR(100) NULL,
 		`type_of_cover` VARCHAR(100) NULL,
-		`quote_retrieval` VARCHAR(15) NULL,
+		`quote_retrieval` VARCHAR(30) NULL,
 		`received` DATETIME NULL,
 		PRIMARY KEY (`id`));";
 		$table = Database::create_table($sql);
@@ -121,26 +123,29 @@ class Quote {
 			if (isset($_SESSION["quote_id"])) {
 				$update = Database::update_row_by_id('quotes', $db_values, $_SESSION["quote_id"]);
 			} else {
+				$db_values["received"] = date('Y-m-d H:i:s'); // Set received date
 				$insert = Database::insert_row('quotes', $db_values);
 				$row = Database::last_inserted_row();
 				$_SESSION["quote_id"] = $row;
 			}
 			if (isset($update) || isset($insert)) {
-				$_SESSION["submitted_values"] = null; // Clear
+				$_SESSION["submitted_values"] = null;
 				Utilities::redirect('/quote/bike-details/');
 			}
 		} elseif ($this->quote_step == 'bike-details') {
 			$db_values = $this->check_submitted_values($submitted_values, 'bike_details');
 			$update = Database::update_row_by_id('quotes', $db_values, $_SESSION["quote_id"]);
 			if (isset($update)) {
-				$_SESSION["submitted_values"] = null; // Clear
+				$_SESSION["submitted_values"] = null;
 				Utilities::redirect('/quote/cover-type/');
 			}
 		} elseif ($this->quote_step == 'cover-type') {
 			$db_values = $this->check_submitted_values($submitted_values, 'cover_type');
+			$quote = Database::find_row_by_id('quotes', $_SESSION["quote_id"]);
+			$db_values["quote_retrieval"] = $quote["surname"] . date('YmdHis'); // Generate retrieval code
 			$update = Database::update_row_by_id('quotes', $db_values, $_SESSION["quote_id"]);
 			if (isset($update)) {
-				$_SESSION["submitted_values"] = null; // Clear
+				$_SESSION["submitted_values"] = null;
 				Utilities::redirect('/quote/premium/');
 			}
 		}
@@ -175,6 +180,17 @@ class Quote {
 			$o .= '</ul>';
 			$_SESSION["errors"] = null; // Clear
 			return $o;
+		}
+	}
+
+	/**
+	 * Display quote premium
+	 * @return null
+	 */
+	private function display_quote_premium() {
+		if ($this->quote_step == 'premium') {
+			$premium = new Premium;
+			$this->display_premium = $premium;
 		}
 	}
 
