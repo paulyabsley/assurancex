@@ -59,6 +59,8 @@ class Quote {
 		`date_of_birth` DATE NULL,
 		`house_number` VARCHAR(10) NULL,
 		`postcode` VARCHAR(8) NULL,
+		`latitude` VARCHAR(50) NULL,
+		`longitude` VARCHAR(50) NULL,
 		`manufacturer` VARCHAR(100) NULL,
 		`model` VARCHAR(100) NULL,
 		`market_value` VARCHAR(100) NULL,
@@ -142,7 +144,7 @@ class Quote {
 		} elseif ($this->quote_step == 'cover-type') {
 			$db_values = $this->check_submitted_values($submitted_values, 'cover_type');
 			$quote = Database::find_row_by_id('quotes', $_SESSION["quote_id"]);
-			$db_values["quote_retrieval"] = $quote["surname"] . date('YmdHis'); // Generate retrieval code
+			$db_values["quote_retrieval"] = strtoupper($quote["surname"]) . time(); // Generate retrieval code
 			$update = Database::update_row_by_id('quotes', $db_values, $_SESSION["quote_id"]);
 			if (isset($update)) {
 				$_SESSION["submitted_values"] = null;
