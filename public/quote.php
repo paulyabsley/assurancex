@@ -6,6 +6,7 @@ echo $html->h;
 echo $html->b;
 echo $quote->errors;
 echo $quote->display_form;
-// var_dump($_SESSION);
+echo $quote->restart;
+var_dump($_SESSION);
 // var_dump($errors);
 echo $html->f;

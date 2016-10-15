@@ -20,7 +20,6 @@ class Form {
 		if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			return true;
 		} else {
-			$_SESSION["submitted_values"] = null; // Clear when not post
 			return false;
 		}
 	}
@@ -62,30 +61,6 @@ class Form {
 					// if ($options["type"] === "switch" && empty($value)) {
 					// 	$value = 0;
 					// }
-					// // Images
-					// if ($options["type"] === "image") {
-					// 	// Check if a temp image has been uploaded
-					// 	if (isset($_SESSION["submitted_values"]["tmp_" . $name])) {
-					// 		$db_values["tmp_" . $name] = $_SESSION["submitted_values"]["tmp_" . $name];
-					// 	}
-					// 	// Validate image
-					// 	$image_valid = validate_image($options);
-					// 	if ($image_valid) {
-					// 		// Move image to temp directory only when its valid
-					// 		$upload_image = upload_image($name);
-					// 		// Update tmp image in session and db_values
-					// 		$_SESSION["submitted_values"]["tmp_" . $name] = $upload_image;
-					// 		$db_values["tmp_" . $name] = $upload_image;
-					// 	}
-					// 	// DB value can't be null
-					// 	if (empty($submitted_values[$name])) {
-					// 		// If image db field is empty, use empty string
-					// 		$db_values[$name] = '';
-					// 	} else {
-					// 		// Put existing image back into session
-					// 		$_SESSION["submitted_values"][$name] = $submitted_values[$name];
-					// 		$db_values[$name] = $submitted_values[$name];
-					// 	}
 					// } else {
 						// Put values into session submitted_values array. Fieldname as the index
 						$_SESSION["submitted_values"][$name] = htmlspecialchars($value);
@@ -132,9 +107,9 @@ class Form {
 	public function display_field($options) {
 		if (isset($options["type"])) {
 			switch ($options["type"]) {
-				// case "select":
-				// 	$field = $this->display_label_select($options);
-				// 	break;
+				case "select":
+					$field = $this->display_label_select($options);
+					break;
 				case "submit":
 					$field = $this->display_submit($options);
 					break;
@@ -154,6 +129,9 @@ class Form {
 	private function display_label_input($field) {
 		global $errors;
 		$submitted_values = (isset($_SESSION["submitted_values"])) ? $_SESSION["submitted_values"] : '';
+		if (isset($_SESSION["quote_id"])) {
+			$submitted_values = Database::find_row_by_id('quotes', $_SESSION["quote_id"]);
+		}
 		$fieldname = $field["name"];
 		$fieldname_formatted = static::format_field_name($fieldname);
 		$error = $value = $required = $maxlength = '';
@@ -187,6 +165,56 @@ class Form {
 		// $o .= $required;
 		$o .= $value;
 		$o .= '>';
+		$o .= '</div>';
+		return $o;
+	}
+
+	/**
+	 * Display form Label Select
+	 * @param array $field Options for the field
+	 * @return string 
+	 */
+	private function display_label_select($field) {
+		global $errors;
+		$submitted_values = (isset($_SESSION["submitted_values"])) ? $_SESSION["submitted_values"] : '';
+		if (isset($_SESSION["quote_id"])) {
+			$submitted_values = Database::find_row_by_id('quotes', $_SESSION["quote_id"]);
+		}
+		$fieldname = $field["name"];
+		$fieldname_formatted = static::format_field_name($fieldname);
+		$error = $required = $current_value = $default_value = '';
+		// Error
+		if (isset($errors[$fieldname])) {
+			$error = ' class="error"';
+		}
+		// Required
+		if (isset($field["required"])) {
+			$required = ' required';
+		}
+		// Value
+		if (isset($submitted_values) && isset($submitted_values[$fieldname])) {
+			$current_value = $submitted_values[$fieldname];
+		}
+		// Default value
+		if (isset($field["default_value"])) {
+			$default_value = $field["default_value"];
+		}
+		$o = '<div>';
+		$o .= '<label' . $error . ' for="' . $fieldname . '">' . $fieldname_formatted . '</label>';
+		$o .= '<select id="' . $fieldname . '" name="' . $fieldname . '"';
+		$o .= $error;
+		// $o .= $required;
+		$o .= '>';
+		$o .= '<option value="' . $default_value . '">Select a ' . $fieldname_formatted . '</option>';
+		foreach ($field["options"] as $option) {
+			if ($current_value === $option) {
+				$selected = ' selected';
+			} else {
+				$selected = '';
+			}
+			$o .= '<option value="' . $option . '"' . $selected .'>' . $option . '</option>';
+		}
+		$o .= '</select>';
 		$o .= '</div>';
 		return $o;
 	}

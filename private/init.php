@@ -1,6 +1,13 @@
 <?php
 require_once("db.php");
 
+// Environment (production/local)
+define("ENV", "local");
+
+// Document root
+$root = ($_SERVER["HTTP_HOST"] !== 'assurancex.local') ? '/assurancex/public' : '';
+define("ROOT", $root);
+
 // Autoload
 spl_autoload_register('autoloader');
 

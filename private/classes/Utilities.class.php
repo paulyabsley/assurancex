@@ -33,7 +33,7 @@ class Utilities {
 		],
 		'date_of_birth' => [
 			'name' => 'date_of_birth',
-			'type' => 'text',
+			'type' => 'date',
 			'required' => true,
 			'maxlength' => 10,
 			'database' => true,
@@ -91,14 +91,15 @@ class Utilities {
 	public static $cover_type = [
 		'policy_start_date' => [
 			'name' => 'policy_start_date',
-			'type' => 'text',
+			'type' => 'date',
 			'required' => true,
 			'maxlength' => 100,
 			'database' => true,
 		],
 		'type_of_cover' => [
 			'name' => 'type_of_cover',
-			'type' => 'radio',
+			'type' => 'select',
+			'options' => ['Bronze', 'Silver', 'Gold'],
 			'required' => true,
 			'maxlength' => 100,
 			'database' => true,
@@ -115,7 +116,34 @@ class Utilities {
 	 * @param string $location Where to redirect to
 	 */
 	public static function redirect($location) {
-		header("Location: $location");
+		header("Location: " . ROOT . $location);
+		exit;
+	}
+
+	/**
+	 * PDO Error Catching
+	 * @param array $e error object
+	 * @param string $sql query
+	 * @return null
+	 */
+	public static function pdo_caught($e, $sql = '')  {
+		if (ENV === "local") {
+			$o = '<pre style="background: #A13B3B; padding: 2em; color: white; margin: 2em; font-family: Monaco, \'Courier New\', Courier, monospace; line-height: 1.8; letter-spacing: .1em; font-size: .7em; overflow: scroll;">';
+			$o .= '<h2 style="margin-top: 0;">Message</h2>';
+			$o .= $e->getMessage();
+			$o .= '<h2>Code</h2>';
+			$o .= $e->getCode();
+			$o .= '<h2>Trace</h2>';
+			$o .= $e->getTraceAsString();
+			if (!empty($sql)) {
+				$o .= '<h2>Query</h2>';
+				$o .= $sql;
+			}
+			$o .= '</pre>';
+			echo $o;
+		} else {
+			echo "Sorry, there is a problem with this page. Please contact us for further support.";
+		}
 		exit;
 	}
 
