@@ -66,6 +66,7 @@ class Quote {
 		`market_value` VARCHAR(100) NULL,
 		`policy_start_date` VARCHAR(100) NULL,
 		`type_of_cover` VARCHAR(100) NULL,
+		`crime_level` INT NULL,
 		`quote_retrieval` VARCHAR(30) NULL,
 		`received` DATETIME NULL,
 		PRIMARY KEY (`id`));";
@@ -122,6 +123,8 @@ class Quote {
 	private function store_quote($submitted_values) {
 		if ($this->quote_step == 'personal-details') {
 			$db_values = $this->check_submitted_values($submitted_values, 'personal_details');
+			// Reset Lat/Long in case the postcode has changed
+			$db_values["latitude"] = $db_values["longitude"] = $db_values["neighbourhood"] = '';
 			if (isset($_SESSION["quote_id"])) {
 				$update = Database::update_row_by_id('quotes', $db_values, $_SESSION["quote_id"]);
 			} else {
@@ -192,7 +195,7 @@ class Quote {
 	private function display_quote_premium() {
 		if ($this->quote_step == 'premium') {
 			$premium = new Premium;
-			$this->display_premium = $premium;
+			$this->display_premium = $premium->display_premium;
 		}
 	}
 
