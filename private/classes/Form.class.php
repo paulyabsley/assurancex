@@ -39,42 +39,27 @@ class Form {
 			case 'cover-type':
 				$fields = Utilities::$cover_type;
 				break;
+			case 'retrieve-quote':
+				$fields = Utilities::$retrieve_quote;
+				break;
 			default:
 				break;
 		}
-
-		// global $submitted_values, $current_id, $db_table;
-		// $db_values = array();
-		// Check for valid csrf token
-		// validate_csrf_token();
 		foreach ($fields as $field => $options) {
 			// Only for fields that have db_value
 			if (isset($options["database"])) {
 				$name = $options["name"]; // Fieldname
 				if (isset($options["type"])) {
-					// // If the field doesn't create a value (such as checkboxes) set it to empty
-					// if (!isset($_POST[$name])) {
-					// 	$_POST[$name] = "";
-					// }
 					$value = $_POST[$name]; // Submitted value
-					// // Switch elements that are off need to be set to 0
-					// if ($options["type"] === "switch" && empty($value)) {
-					// 	$value = 0;
-					// }
-					// } else {
-						// Put values into session submitted_values array. Fieldname as the index
-						$_SESSION["submitted_values"][$name] = htmlspecialchars($value);
-						$db_values[$name] = $value; // Also put values into db_values array
-					// }
+					// Put values into session submitted_values array. Fieldname as the index
+					$_SESSION["submitted_values"][$name] = htmlspecialchars($value);
+					$db_values[$name] = $value; // Also put values into db_values array
 				} else {
 					$db_values[$name] = $options["value"]; // Non form fields use value from own options
 				}
 				// Validation
 				if (isset($options["required"])) {
 					Validation::validate_required($name, $value);
-				}
-				if (isset($options["maxlength"])) {
-					// validate_max_length($name, $value, $options["maxlength"]);
 				}
 			}
 		}

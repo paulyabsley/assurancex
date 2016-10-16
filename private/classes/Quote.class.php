@@ -1,42 +1,34 @@
 <?php
 
-// Collect/store user details
-// Collect/store bike details
-// Collect/store cover type
-
-// DB tables for user and quote
-// Users holds user details
-// Quotes holds quote details which contains bike details, cover types, id for retrieving quotes
-
 class Quote {
 
 	public $quote_step;
 	public $form;
+	public $message;
 	public $display_form;
 	public $display_premium;
 	public $errors;
 	public $restart;
+	public $form_values;
 
 	function __construct() {
 		global $errors;
-
 		// Check Quote Step
 		$this->quote_step = $this->check_quote_step();
-		
 		// New form object
 		$this->form = new Form();
-		
 		// Check if it is submission
 		if ($this->form->check_submission()) {
 			$submitted_values = $this->form->handle_submission($this->quote_step);
-			if (!empty($errors)) {
+			if ($this->quote_step == 'retrieve-quote') {
+				$this->get_quote();
+			} elseif (!empty($errors)) {
 				$_SESSION["errors"] = $errors;
 				$this->errors = $this->display_quote_errors();
 			} else {
 				$store = $this->store_quote($submitted_values);
 			}
 		}
-
 		// Set Quote Form
 		$this->display_quote_step_form();
 		// Set Restart
@@ -46,10 +38,28 @@ class Quote {
 	}
 
 	/**
+	 * Retrieve stored quote
+	 * @return
+	 */
+	private function get_quote() {
+		$values = $this->form->handle_submission($this->quote_step);
+		if (isset($values["quote_retrieval"])) {
+			$code = $values["quote_retrieval"];
+			$row = Database::select('*', 'quotes', ['quote_retrieval' => $code]);
+			if ($row) {
+				$_SESSION["quote_id"] = $row[0]["id"];
+				Utilities::redirect('/quote/premium/');
+			}
+		}
+		// Not found
+		$this->message = '<p>Quote not found</p>';
+	}
+
+	/**
 	 * Create quote database table
 	 * @return null
 	 */
-	public function create_quote_table() {
+	public static function create_quote_table() {
 		$sql = "CREATE TABLE IF NOT EXISTS `quotes` (
 		`id` INT NOT NULL AUTO_INCREMENT,
 		`title` VARCHAR(45) NULL,
@@ -61,12 +71,14 @@ class Quote {
 		`postcode` VARCHAR(8) NULL,
 		`latitude` VARCHAR(50) NULL,
 		`longitude` VARCHAR(50) NULL,
+		`neighbourhood` VARCHAR(50) NULL,
 		`manufacturer` VARCHAR(100) NULL,
 		`model` VARCHAR(100) NULL,
 		`market_value` VARCHAR(100) NULL,
 		`policy_start_date` VARCHAR(100) NULL,
 		`type_of_cover` VARCHAR(100) NULL,
 		`crime_level` INT NULL,
+		`quote_premium` FLOAT NULL,
 		`quote_retrieval` VARCHAR(30) NULL,
 		`received` DATETIME NULL,
 		PRIMARY KEY (`id`));";
@@ -79,7 +91,7 @@ class Quote {
 	 */
 	private function check_quote_step() {
 		$step = filter_input(INPUT_GET, 'step', FILTER_SANITIZE_STRING);
-		$allowed_steps = ['personal-details', 'bike-details', 'cover-type', 'new', 'premium'];
+		$allowed_steps = ['personal-details', 'bike-details', 'cover-type', 'new', 'premium', 'retrieve-quote'];
 		$found = array_search($step, $allowed_steps);
 		if ($found === 0 || $found) {
 			return $step;
@@ -103,6 +115,8 @@ class Quote {
 			$this->display_form = $this->form->display_form(Utilities::$bike_details);
 		} elseif ($this->quote_step == 'cover-type') {
 			$this->display_form = $this->form->display_form(Utilities::$cover_type);
+		} elseif ($this->quote_step == 'retrieve-quote') {
+			$this->display_form = $this->form->display_form(Utilities::$retrieve_quote);
 		}
 	}
 

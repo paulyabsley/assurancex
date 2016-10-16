@@ -111,6 +111,21 @@ class Utilities {
 		]
 	];
 
+	public static $retrieve_quote = [
+		'quote_retrieval' => [
+			'name' => 'quote_retrieval',
+			'type' => 'text',
+			'required' => true,
+			'maxlength' => 100,
+			'database' => true,
+		],
+		'submit_cancel' => [
+			'name' => 'retrieve_quote',
+			'type' => 'submit',
+			'value' => 'submit_quote_retrieval',
+		]
+	];
+
 	/**
 	 * Redirect and exit
 	 * @param string $location Where to redirect to

@@ -180,6 +180,7 @@ class Premium {
 			$o .= '<p>£' . $this->quote_premium . '</p>';
 			$o .= '<p>Your quote has been saved. You can use the following code to retrieve it: ' . $this->customer_quote["quote_retrieval"] . '</p>';
 			$o .= '<a href="#">Checkout with PayPal</a>';
+			$_SESSION["submitted_values"] = null;
 		} else {
 			$o .= '<p>We\'re sorry, there was a problem calculating your premium. Adjust your information or call us on 08000 890891.</p>';
 		}
